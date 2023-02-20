@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Electric Beans</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<style>
+    td, th {text-align: center;}
+    table, td, th {border: 1px solid black;}
+    table {border-collapse: collapse;width: 100%;}
+</style>
+</head>
+<body>
+
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+  <div class="w3-bar w3-white w3-wide w3-padding w3-card">
+    <a href="#home" class="w3-bar-item w3-button"><b>Electric Beans</b>🫘</a>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="w3-display-container w3-content w3-wide" style="max-width:1500px;" id="home">
+  <div class="w3-display-middle w3-margin-top w3-center">
+    <h1 class="w3-xxlarge w3-text-white"><span class="w3-padding w3-black w3-opacity-min"><b>Electric Beans</b></span> <span class="w3-hide-small w3-text-light-grey">🫘</span></h1>
+  </div>
+</header>
+
+<!-- Page content -->
+<div class="w3-content w3-padding" style="max-width:1564px">
+
+  <!-- About Section -->
+  <div class="w3-container w3-padding-32" id="about">
+    <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">About Electric Beans</h3>
+    <p>Electric Beans is a simple Python application to visualize electric fields in a simple way. Users are able to upload a CSV of charge data and visualize the results.
+    </p>
+    <br>
+    <P>If you are making a CSV by hand, make sure to follow this format or else you might end up with funky looking figures (<em>You don't need the headers in your file.</em>)</em>:</P>
+    <table>
+        <thead>
+            <tr>
+                <th>Charge (Value of charge (q))</th>
+                <th>X (X coordinate)</th>
+                <th>Y (Y coordinate)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>-1</td>
+                <td>-1</td>
+                <td>0</td>
+            </tr>
+        </tbody>
+    </table>
+  </div>
+
+
+  <!-- CSV Ingestion -->
+  <div class="w3-container w3-padding-32" id="contact">
+    <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Upload Charge Data</h3>
+    <p>Upload a CSV file of some charges below to visualize the data!</p>
+    <form action="/" method="post" enctype="multipart/form-data">
+      <label for="csv_file">Upload a CSV file</label>
+        <input class="w3-input w3-border" type="file" id="csv_file" name="csv_file" required accept="csv">
+      <button class="w3-button w3-black w3-section" type="submit">
+        <i class="fa fa-paper-plane"></i> Generate Electric Fields
+      </button>
+    </form>
+  </div>
+  
+<!-- Image of Electric Field -->
+<div class="w3-container" style="align-self: center;">
+  <img src="data:image/png;base64,{{ figure }}" class="w3-image" style="height:auto;align-self: center;align-content: center;">
+</div>
+
+  <!-- CSV Line Generation -->
+  <div class="w3-container w3-padding-32" id="contact">
+    <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Get Line CSV</h3>
+    <p>Fill out the form below to get either horizontal or verticle line data!</p>
+    <form action="/api/get/csv/line" method="post" oninput="xi_result.value = xi.value; yi_result.value = yi.value">
+    <p>Charge type (Horizontal Line or Verticle Line)</p>
+    {% for charge_opt in options.charge_type %}
+      <label for="{{ charge_opt }}">{{ charge_opt }}</label>
+      <input type="radio" id="{{ charge_opt }}" name="charge_type" value="{{ charge_opt }}">
+      <br>
+    {% endfor %}
+    <br>
+    <p>Line parameters (length of the line, numeric of infinite)</p>
+    {% for charge_val in options.lengths %}
+      <label for="{{ charge_val }}">{{ charge_val }}</label>
+      <input type="radio" id="{{ charge_val }}" name="length" value="{{ charge_val }}">
+      <br>
+    {% endfor %}
+    <br>
+        X position: <output name="xi_result" for="xi"></output><br>
+        <input type="range" id="xi" name="xi" min="-4" max="4" required><br>
+        <br>
+
+        Y position: <output name="yi_result" for="yi"></output><br>
+        <input type="range" id="yi" name="yi" min="-4" max="4" required><br>
+        <br>
+
+        <label for="qi">Charge Value: </label>
+        <input type="number" id="qi" name="qi" min="-10" max="10" placeholder="1" required><br>
+      <button class="w3-button w3-black w3-section" type="submit">
+        <i class="fa fa-paper-plane"></i> Generate Circle Field
+      </button>
+    </form>
+  </div>
+
+
+  <!-- CSV Circle Generation -->
+  <div class="w3-container w3-padding-32" id="contact">
+    <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Get Circle CSV</h3>
+    <p>Fill out the form below to get a CSV of a cirlce of charges</p>
+    <form action="/api/get/csv/circle" method="post" oninput="xi_result.value = xi.value; yi_result.value = yi.value ; ri_result.value = ri.value">
+    <br>
+    <p>Line parameters (length of the line, numeric of infinite)</p>
+    <br>
+        X position: <output name="xi_result" for="xi"></output><br>
+        <input type="range" id="xi" name="xi" min="-4" max="4" required><br>
+        <br>
+
+        Y position: <output name="yi_result" for="yi"></output><br>
+        <input type="range" id="yi" name="yi" min="-4" max="4" required><br>
+        <br>
+
+        Radius: <output name="ri_result" for="ri"></output><br>
+        <input type="range" id="ri" name="ri" min="1" max="5" required><br>
+        <br>
+
+        <label for="qi">Charge Value: </label>
+        <input type="number" id="qi" name="qi" min="-10" max="10" placeholder="1" required><br>
+      <button class="w3-button w3-black w3-section" type="submit">
+        <i class="fa fa-paper-plane"></i> Generate Line Field
+      </button>
+    </form>
+  </div>
+
+<!-- End page content -->
+</div>
+
+
+<!-- Footer -->
+<footer class="w3-center w3-black w3-padding-16">
+  <p>Powered by <a href="#" title="Electricity" target="_blank" class="w3-hover-text-green">Electricity!</a></p>
+</footer>
+
+</body>
+</html>
